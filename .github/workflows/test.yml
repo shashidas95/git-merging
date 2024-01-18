@@ -1,0 +1,41 @@
+name: Test and Merge shashi/feature Branch
+
+on:
+  push:
+    branches:
+      - master
+      - shashi/feature
+
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm install
+
+
+  merge:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Merge shashi/feature into master 
+        run: |
+         git config user.name "${{ github.actor }}"
+         git config user.email "${{ github.actor }}@gmail.com"
+         git checkout master
+         git merge --ff-only ${{ github.head_ref }}
+         git push origin master
+         
